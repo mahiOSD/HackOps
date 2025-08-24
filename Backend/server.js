@@ -6,11 +6,11 @@ const mysql = require("mysql2");
 dotenv.config();
 const app = express();
 
-// Middleware
+
 app.use(cors());
 app.use(express.json());
 
-// MySQL Connection
+
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -26,12 +26,18 @@ db.connect((err) => {
     console.log("✅ Connected to MySQL Database");
 });
 
-// Test route
+
 app.get("/", (req, res) => {
     res.send("Backend is running...");
 });
 
-// Example DB route
+
+
+app.get("/", (req, res) => {
+    res.send("Backend is running...");
+});
+
+
 app.get("/users", (req, res) => {
     db.query("SELECT * FROM users", (err, results) => {
         if (err) return res.status(500).json({ error: "Database error" });
@@ -39,7 +45,7 @@ app.get("/users", (req, res) => {
     });
 });
 
-// Start Server
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

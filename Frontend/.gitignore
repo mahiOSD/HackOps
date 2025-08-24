@@ -21,8 +21,3 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
-*.sw*
-
-# Windows system folders
-$RECYCLE.BIN/
-System Volume Information/
