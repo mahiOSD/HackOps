@@ -1,73 +1,155 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
-const eventsData = [
-  {
-    id: 1,
-    title: "TechFest 2025",
-    date: "Sept 15, 2025",
-    description: "Annual robotics & tech showcase.",
-    location: "City Convention Center",
-    organizer: "Tech Club",
-    image: "https://cdn.abcotvs.com/dip/images/13145252_041723-localish-LSH7057-ROBOTICSCLUB-WPVI-vid.jpg",
-    participants: 120
-  },
-  {
-    id: 2,
-    title: "Robotics Club Meet",
-    date: "Oct 5, 2025",
-    description: "Club meeting and project showcase.",
-    location: "Robotics Lab, University",
-    organizer: "Robotics Club",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuqsFvrrX4Cf3iu-1S94hq9-480vKS2BYH3Q&s",
-    participants: 45
-  },
-  {
-    id: 3,
-    title: "Innovation Challenge",
-    date: "Nov 20, 2025",
-    description: "Hackathon and robotics competitions.",
-    location: "Innovation Hub",
-    organizer: "Tech Society",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNp5xKBozBGd7TIVSAEgkVYuRpsr1_xIPR7w&s",
-    participants: 75
-  }
-];
-
 export default function EventDetail() {
-  const { id } = useParams(); // get event id from URL
-  const event = eventsData.find(e => e.id === parseInt(id));
-  const [isRegistered, setIsRegistered] = useState(false);
-  const [participants, setParticipants] = useState(event.participants);
+  const { id } = useParams();
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [participants, setParticipants] = useState(0);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    student_name: "",
+    email: "",
+    contact_number: "",
+    semester: "",
+    department: "",
+  });
 
-  const handleRegister = () => {
-    if (!isRegistered) {
-      setParticipants(prev => prev + 1);
-    } else {
-      setParticipants(prev => prev - 1);
-    }
-    setIsRegistered(!isRegistered);
+  // Fetch event details
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/events/${id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch event details");
+        return res.json();
+      })
+      .then((data) => {
+        setEvent(data);
+        setParticipants(data.participants || 0); // adjust if backend returns participant count
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Unable to load event details.");
+        setLoading(false);
+      });
+  }, [id]);
+
+  // Handle input changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Submit registration
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`http://localhost:5000/api/events/${id}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Registration failed");
+      }
+
+      alert("Registration successful!");
+      setParticipants((prev) => prev + 1);
+      setShowForm(false);
+      setFormData({
+        student_name: "",
+        email: "",
+        contact_number: "",
+        semester: "",
+        department: "",
+      });
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
+  };
+
+  if (loading) return <p>Loading event details...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
   if (!event) return <p>Event not found</p>;
 
   return (
     <div className="event-detail-container">
-      <Link to="/" className="nav-btn">← Back to Home</Link>
+      <Link to="/events" className="nav-btn">← Back to Events</Link>
       <div className="event-detail-card">
-        <img src={event.image} alt={event.title} className="event-detail-img" />
+        {event.image && (
+          <img
+            src={
+              event.image.startsWith("http")
+                ? event.image
+                : `http://localhost:5000/uploads/${event.image}`
+            }
+            alt={event.title}
+            className="event-detail-img"
+          />
+        )}
         <div className="event-detail-content">
           <h1>{event.title}</h1>
-          <p><strong>Date:</strong> {event.date}</p>
-          <p><strong>Location:</strong> {event.location}</p>
-          <p><strong>Organizer:</strong> {event.organizer}</p>
           <p>{event.description}</p>
+          <p><strong>Date:</strong> {event.date}</p>
+          <p><strong>Time:</strong> {event.time || "TBA"}</p>
+          <p><strong>Location:</strong> {event.location || "TBA"}</p>
+          <p><strong>Category:</strong> {event.category || "General"}</p>
           <p><strong>Registered Participants:</strong> {participants}</p>
-          <button className="btn" onClick={handleRegister}>
-            {isRegistered ? "Unregister" : "Register"}
-          </button>
+          <button className="btn" onClick={() => setShowForm(true)}>Register</button>
         </div>
       </div>
+
+      {/* Registration Form Modal */}
+      {showForm && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Register for {event.title}</h2>
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="student_name"
+                placeholder="Your Name"
+                value={formData.student_name}
+                onChange={handleChange}
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Your Email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+              <input
+                type="text"
+                name="contact_number"
+                placeholder="Contact Number"
+                value={formData.contact_number}
+                onChange={handleChange}
+              />
+              <input
+                type="text"
+                name="semester"
+                placeholder="Semester"
+                value={formData.semester}
+                onChange={handleChange}
+              />
+              <input
+                type="text"
+                name="department"
+                placeholder="Department"
+                value={formData.department}
+                onChange={handleChange}
+              />
+              <button type="submit" className="btn">Submit</button>
+              <button type="button" className="btn" onClick={() => setShowForm(false)}>Cancel</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
