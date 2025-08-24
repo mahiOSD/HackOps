@@ -1,21 +1,37 @@
-import React from 'react';
-
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function StudentDashboard() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
   return (
     <div className="dashboard-container">
-      <h2>🎓 Student Dashboard</h2>
+      <div className="dashboard-header">
+        <h2>🎓 Student Dashboard</h2>
+        <button onClick={handleLogout} className="logout-btn">
+          Logout
+        </button>
+      </div>
+
       <div className="card-grid">
         <div className="card">
           <h3>My Events</h3>
           <p>You are registered for 3 upcoming events.</p>
           <button className="btn">View My Events</button>
         </div>
+
         <div className="card">
           <h3>All Events</h3>
           <p>Browse and register for exciting upcoming events.</p>
           <button className="btn">Explore Events</button>
         </div>
+
         <div className="card">
           <h3>Profile</h3>
           <p>Update your profile information & preferences.</p>

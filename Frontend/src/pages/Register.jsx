@@ -9,10 +9,28 @@ export default function Register() {
   const [registered, setRegistered] = useState(false);
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
-    e.preventDefault();
-    setRegistered(true); 
-  };
+
+
+  const handleRegister = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password, role }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      setRegistered(true);
+    } else {
+      alert(data.error);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+
 
   const goToDashboard = () => {
     if (role === 'student') navigate('/student');
