@@ -5,18 +5,28 @@ import StudentDashboard from './pages/StudentDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import EventDetail from "./pages/EventDetail";
+import Chatbot from "./pages/Chatbot";
+import ManageEventsPage from "./pages/ManageEventsPage"; 
+
 export default function App() {
   return (
+    <>
+     
     <Router>
       <Routes>
+        {/* Public pages */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* Dashboards */}
         <Route path="/student" element={<StudentDashboard />} />
-        <Route path="/event/:id" element={<EventDetail />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/manage-events" element={<ManageEventsPage />} />
       </Routes>
     </Router>
+
+    <Chatbot />
+    </>
   );
 }

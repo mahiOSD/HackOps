@@ -1,27 +1,43 @@
-import React from 'react';
-
+import React, { useState } from "react";
+import "./StudentDashboard.css";
 
 export default function StudentDashboard() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = "/login";
+  };
+
   return (
     <div className="dashboard-container">
-      <h2>🎓 Student Dashboard</h2>
-      <div className="card-grid">
-        <div className="card">
-          <h3>My Events</h3>
-          <p>You are registered for 3 upcoming events.</p>
-          <button className="btn">View My Events</button>
-        </div>
-        <div className="card">
-          <h3>All Events</h3>
-          <p>Browse and register for exciting upcoming events.</p>
-          <button className="btn">Explore Events</button>
-        </div>
-        <div className="card">
-          <h3>Profile</h3>
-          <p>Update your profile information & preferences.</p>
-          <button className="btn">Edit Profile</button>
-        </div>
-      </div>
+      {/* Top Bar */}
+      <header className="topbar">
+        <button
+          className={`hamburger ${menuOpen ? "open" : ""}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <h1>🎓 Student Dashboard</h1>
+      </header>
+
+      {/* Side Menu */}
+      <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
+        <button className="close-btn" onClick={() => setMenuOpen(false)}>
+          ×
+        </button>
+        <button onClick={() => setMenuOpen(false)}>All Events</button>
+        <button onClick={() => setMenuOpen(false)}>My Events</button>
+        <button onClick={() => setMenuOpen(false)}>Profile</button>
+        <button className="logout" onClick={handleLogout}>Logout</button>
+      </nav>
+
+      {/* Empty Main Page */}
+      <main className="main-content"></main>
     </div>
   );
 }

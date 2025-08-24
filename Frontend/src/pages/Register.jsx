@@ -1,51 +1,49 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
+import robotGif from "../assets/robot2.gif";
 
 export default function Register() {
-  const [role, setRole] = useState('student');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [registered, setRegistered] = useState(false);
-  const navigate = useNavigate();
-
-  const handleRegister = (e) => {
-    e.preventDefault();
-    setRegistered(true); 
-  };
-
-  const goToDashboard = () => {
-    if (role === 'student') navigate('/student');
-    else navigate('/admin');
-  };
-
   return (
-    <div className="auth-container">
-      <h2>Register</h2>
-      {!registered ? (
-        <form onSubmit={handleRegister} className="auth-form">
-          <label>Name</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+    <div className="auth-page">
+          {/* Left side image */}
+          <div className="auth-illustration">
+            <img
+              src={robotGif} // ekhane import variable use korte hobe
+              alt="Robot illustration"
+              className="robot-illustration"
+            />
+          </div>
 
-          <label>Email</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-
-          <label>Password</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-
-          <label>Role</label>
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="student">Student</option>
-            <option value="admin">Admin</option>
-          </select>
-
-          <button type="submit" className="btn">Register</button>
+      {/* Right side register box */}
+      <div className="auth-card">
+        <h2 className="auth-title">Register</h2>
+        <form className="auth-form">
+          <div className="input-group">
+            <label>Name</label>
+            <input type="text" placeholder="Enter name" required />
+          </div>
+          <div className="input-group">
+            <label>Email</label>
+            <input type="email" placeholder="Enter email" required />
+          </div>
+          <div className="input-group">
+            <label>Password</label>
+            <input type="password" placeholder="Enter password" required />
+          </div>
+          <div className="input-group">
+            <label>Role</label>
+            <select required>
+              <option value="">Select role</option>
+              <option value="student">Student</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <button type="submit" className="btn-animated">Register</button>
         </form>
-      ) : (
-        <button className="btn" onClick={goToDashboard}>
-          {role === 'student' ? 'Go to Student Dashboard' : 'Go to Admin Dashboard'}
-        </button>
-      )}
+        <p className="register-link">
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
+      </div>
     </div>
   );
 }
