@@ -7,7 +7,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./ProtectedRoute";
 import GuestRoute from "./GuestRoute";
-import EventDetail from "./pages/EventDetail";
+
 import Chatbot from "./pages/Chatbot";
 
 
@@ -53,7 +53,8 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/events/:id" element={<EventDetail />} />
+        <Route path="/events/:id" element={<eventDetail />} />
+          
 
       </Routes>
     </Router>
