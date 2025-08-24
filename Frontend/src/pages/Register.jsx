@@ -5,16 +5,15 @@ import robotGif from "../assets/robot2.gif";
 export default function Register() {
   return (
     <div className="auth-page">
-          {/* Left side image */}
+         
           <div className="auth-illustration">
             <img
-              src={robotGif} // ekhane import variable use korte hobe
+              src={robotGif} 
               alt="Robot illustration"
               className="robot-illustration"
             />
           </div>
 
-      {/* Right side register box */}
       <div className="auth-card">
         <h2 className="auth-title">Register</h2>
         <form className="auth-form">
